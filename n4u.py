@@ -162,8 +162,8 @@ musictrack={
 "startBeat": 0,
 "endBeat": len(inputt["beats"]),
 "videoStartTime": 0,
-"previewEntry": len(inputt["beats"])/2,
-"previewLoopStart": len(inputt["beats"])/2,
+"previewEntry": int(len(inputt["beats"])/2),
+"previewLoopStart": int(len(inputt["beats"])/2),
 "previewLoopEnd": len(inputt["beats"]),
 "volume": 0
 },
