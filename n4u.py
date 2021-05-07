@@ -1,7 +1,12 @@
-import json
+import json, struct, binascii
 
 with open("input.json") as f:
     inputt=json.load(f)
+
+def hex_to_rgb(value): #https://stackoverflow.com/questions/29643352/converting-hex-to-rgb-value-in-python
+    value = value.lstrip('#')
+    lv = len(value)
+    return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
 ktape={
 "__class": "Tape",
@@ -18,7 +23,7 @@ for lyric in inputt["lyrics"]:
     index=0
     while(index<len(inputt["beats"])):
         if(lyric["time"]>inputt["beats"][index]):
-            division=(inputt["beats"][index+1]-inputt["beats"][index])/24
+            division=(inputt["beats"][index+1]-inputt["beats"][index])/24#credit to bezdrom for formula
             break
         index+=1
     ktape["Clips"].append({
@@ -52,7 +57,7 @@ for picto in inputt["pictos"]:
     index=0
     while(index<len(inputt["beats"])):
         if(picto["time"]>inputt["beats"][index]):
-            division=(inputt["beats"][index+1]-inputt["beats"][index])/24
+            division=(inputt["beats"][index+1]-inputt["beats"][index])/24#credit to bezdrom for formula
             break
         index+=1
     dtape["Clips"].append({
@@ -85,7 +90,7 @@ for moves in [moves0,moves1,moves2,moves3]:
         index=0
         while(index<len(inputt["beats"])):
             if(move["time"]>inputt["beats"][index]):
-                division=(inputt["beats"][index+1]-inputt["beats"][index])/24
+                division=(inputt["beats"][index+1]-inputt["beats"][index])/24#credit to bezdrom for formula
                 break
             index+=1
         try:
@@ -174,6 +179,56 @@ musictrack={
 ]
 }
 
+try:
+    numcoach=inputt["NumCoach"]
+except Exception:
+    numcoach=1
+
+songdesc={
+"__class": "Actor_Template",
+"WIP": 0,
+"LOWUPDATE": 0,
+"UPDATE_LAYER": 0,
+"PROCEDURAL": 0,
+"STARTPAUSED": 0,
+"FORCEISENVIRONMENT": 0,
+"COMPONENTS": [{
+"__class": "JD_SongDescTemplate",
+"MapName": inputt["MapName"],
+"JDVersion": 2020,
+"OriginalJDVersion": inputt["OriginalJDVersion"],
+"Artist": inputt["Artist"],
+"DancerName": "Unknown Dancer",
+"Title": inputt["Title"],
+"Credits": "CREDITS STRING TO BE FILLED",
+"PhoneImages": {
+"cover": "world/maps/"+inputt["MapName"].lower()+"/menuart/textures/"+inputt["MapName"].lower()+"_cover_phone.jpg",
+"coach1": "world/maps/"+inputt["MapName"].lower()+"/menuart/textures/"+inputt["MapName"].lower()+"_coach_1_phone.png",
+"coach2": "world/maps/"+inputt["MapName"].lower()+"/menuart/textures/"+inputt["MapName"].lower()+"_coach_2_phone.png",
+"coach3": "world/maps/"+inputt["MapName"].lower()+"/menuart/textures/"+inputt["MapName"].lower()+"_coach_3_phone.png",
+"coach4": "world/maps/"+inputt["MapName"].lower()+"/menuart/textures/"+inputt["MapName"].lower()+"_coach_4_phone.png"
+},
+"NumCoach": numcoach,
+"MainCoach": -1,
+"Difficulty": 1,
+"SweatDifficulty": 1,
+"backgroundType": 0,
+"LyricsType": 0,
+"Tags": ["main"],
+"Status": 3,
+"LocaleID": 4294967295,
+"MojoValue": 0,
+"CountInProgression": 1,
+"DefaultColors": {
+"lyrics": [1, hex_to_rgb(inputt["lyricsColor"])[0]/255, hex_to_rgb(inputt["lyricsColor"])[1]/255, hex_to_rgb(inputt["lyricsColor"])[2]/255],
+"theme": [1, 1, 1, 1]
+},
+"VideoPreviewPath": ""
+}
+]
+}
+
 json.dump(dtape,open("output/"+inputt["MapName"].lower()+"_tml_dance.dtape.ckd","w"))
 json.dump(ktape,open("output/"+inputt["MapName"].lower()+"_tml_karaoke.ktape.ckd","w"))
 json.dump(musictrack,open("output/"+inputt["MapName"].lower()+"_musictrack.tpl.ckd","w"))
+json.dump(songdesc,open("output/"+inputt["MapName"].lower()+"_songdesc.tpl.ckd","w"))
